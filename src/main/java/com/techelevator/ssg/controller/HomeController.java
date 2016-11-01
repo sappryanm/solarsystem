@@ -1,16 +1,46 @@
 package com.techelevator.ssg.controller;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.dbcp2.BasicDataSource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.techelevator.ssg.model.forum.ForumDao;
+import com.techelevator.ssg.model.forum.ForumPost;
+import com.techelevator.ssg.model.forum.JdbcForumDao;
 
 @Controller
 public class HomeController {
+	
+	
 
+	JdbcForumDao forumDAO;
+	
+//	HomeController() {
+//	
+//		 BasicDataSource dataSource = new BasicDataSource();
+//		 dataSource.setUrl("jdbc:postgresql://localhost:5432/ssgeek");
+//		 dataSource.setUsername("postgres");
+//		 dataSource.setPassword("postgres1");
+//	 
+//		 forumDAO = new JdbcForumDao(dataSource);
+//	}
+	@Autowired
+	ForumDao forumDao;
+	
 	@RequestMapping("/")
 	public String displayHomePage() {
 		return "homePage";
@@ -23,6 +53,42 @@ public class HomeController {
 		return "alienWeight";
 	}
 	
+	//--------------------------------------------------------------------------------
+	@RequestMapping(path="/spaceForumInput", method=RequestMethod.GET)
+	public String handlespaceForumInput(){
+		
+		return "spaceForumInput";
+	}
+	@RequestMapping(path="/spaceForumInput", method=RequestMethod.POST)
+	public String handlespaceForumInputSubmission(@RequestParam String username,
+												@RequestParam String subject,
+												@RequestParam String message){
+		
+			
+		ForumPost post = new ForumPost();
+			post.setMessage(message);
+			post.setUsername(username);
+			post.setSubject(subject);
+			post.setDatePosted(LocalDateTime.now());
+			forumDao.save(post);
+			
+			
+		
+		return "redirect:/spaceForumResult";
+	}
+	
+	@RequestMapping("/spaceForumResult")
+	public String handleSpaceResult(HttpServletRequest request){
+		
+		List<ForumPost> posts = forumDao.getAllPosts();
+		request.setAttribute("posts", posts);
+		
+		return "spaceForumResult";
+		
+	}
+	
+	//--------------------------------------------------------------------------------
+
 	@RequestMapping("/alienWeightResult")
 	public String handleAlienWeightResult(HttpServletRequest request){
 		
