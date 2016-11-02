@@ -16,19 +16,23 @@ import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttributes;
 
 import com.techelevator.ssg.model.forum.ForumDao;
 import com.techelevator.ssg.model.forum.ForumPost;
 import com.techelevator.ssg.model.forum.JdbcForumDao;
+import com.techelevator.ssg.model.store.CartItem;
 import com.techelevator.ssg.model.store.JdbcProductDao;
 import com.techelevator.ssg.model.store.Product;
 import com.techelevator.ssg.model.store.ProductDao;
 
 @Controller
+@SessionAttributes("cart")
 public class HomeController {
 
 	@Autowired
@@ -177,23 +181,61 @@ public class HomeController {
 		return "travelTimeResult";
 	}
 
-	@RequestMapping({"/", "/productList"})
+	@RequestMapping("/productList")
 	public String displayProductList(HttpServletRequest request) {
 		List<Product> products = new ArrayList<Product>(productDAO.getAllProducts());
-		request.setAttribute("products", productDAO.getAllProducts());
+		
+		
+		request.setAttribute("products", products);
+		
+		
 		return "productList";
 	}
-//	@RequestMapping("/productDetail")
-//	public String roductDetail(HttpServletRequest request, HttpServletResponse response) throws IOException {
-//		try {
-//			String productIdParam = request.getParameter("productId");
-//			Long Id = Long.getLong(productIdParam);
-//			request.setAttribute("product", productDAO.getProductById(Id));
-//			return "productDetail";
-//		} catch (NumberFormatException | IndexOutOfBoundsException e) {
-//			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-//			return null;
-//		}
-//	}
+	
+	@RequestMapping(path="/productDetail")
+	public String productDetail(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		try {
+			
+			String productIdParam = request.getParameter("productId");			
+			Long Id = Long.parseLong(productIdParam);
+			request.setAttribute("product", productDAO.getProductById(Id));
+			return "productDetail";
+			
+			
+		} catch (NumberFormatException | IndexOutOfBoundsException e) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+			return null;
+		}
+	}
+	@RequestMapping(path="/shoppingCart", method=RequestMethod.GET)
+	public String handleShoppingCartView(){ 
+	
+		
+		return "shoppingCart";
+	}
+	
+	
+	@RequestMapping(path="/shoppingCart", method=RequestMethod.POST)
+	public String handleShoppingCartRedirect(@RequestParam Long productId, 
+									@RequestParam int quantity, 
+									ModelMap map){
+		
+		Product product = productDAO.getProductById(productId);
+		CartItem item = new CartItem();
+		item.setProduct(product);
+		item.setQuantity(quantity);
+		
+		List<CartItem> items = (List<CartItem>)map.get("cart");
+		if(items == null) {
+			items = new ArrayList<CartItem>();
+		}
+		
+		items.add(item);
+		
+		map.addAttribute("cart", items);
+		
+		return "redirect:/shoppingCart";
+	}
+	
 
 }
