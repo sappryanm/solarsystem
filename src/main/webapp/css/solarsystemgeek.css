@@ -209,7 +209,11 @@ section.centeredPanel p {
 	text-align: center;
 	display: block;
 }
-
+#message {
+	display: block;
+	height: 100px;
+	
+}
 /* Calculator Result */
 section#calculatorResult img {
 	float: left;
