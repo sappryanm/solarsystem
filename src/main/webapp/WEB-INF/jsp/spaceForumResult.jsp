@@ -4,7 +4,7 @@
 
 <div style="background-color: white">
 
-<h1>Alien Weight Calculator</h1>
+<h1>Solar System Geek Forum</h1>
 		<p><a href="spaceForumInput" >Post a Message</a></p>
 		<div class="posts">
 		<c:forEach var='index' items='${posts}' begin="0" end="${posts.size()-1}"> 

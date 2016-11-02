@@ -4,11 +4,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +20,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+
 import com.techelevator.ssg.model.forum.ForumDao;
 import com.techelevator.ssg.model.forum.ForumPost;
 import com.techelevator.ssg.model.forum.JdbcForumDao;
+import com.techelevator.ssg.model.store.JdbcProductDao;
+import com.techelevator.ssg.model.store.Product;
 
 @Controller
 public class HomeController {
@@ -28,7 +33,7 @@ public class HomeController {
 	
 
 	JdbcForumDao forumDAO;
-	
+	JdbcProductDao productDAO;
 //	HomeController() {
 //	
 //		 BasicDataSource dataSource = new BasicDataSource();
@@ -63,17 +68,13 @@ public class HomeController {
 	public String handlespaceForumInputSubmission(@RequestParam String username,
 												@RequestParam String subject,
 												@RequestParam String message){
-		
-			
-		ForumPost post = new ForumPost();
+
+			ForumPost post = new ForumPost();
 			post.setMessage(message);
 			post.setUsername(username);
 			post.setSubject(subject);
 			post.setDatePosted(LocalDateTime.now());
 			forumDao.save(post);
-			
-			
-		
 		return "redirect:/spaceForumResult";
 	}
 	
@@ -185,4 +186,28 @@ public class HomeController {
 		
 		return "travelTimeResult";
 	}
+	@RequestMapping({"/", "/productList"})
+	public String displayProductList(HttpServletRequest request) {
+		System.out.println("working 1");
+		List<Product> products = new ArrayList<Product>(productDAO.getAllProducts());
+		for(Product item: products){
+			System.out.println("working 2");
+			System.out.println(item.getName());
+		}
+		request.setAttribute("products", productDAO.getAllProducts());
+		return "productList";
+	}
+//	@RequestMapping("/productDetail")
+//	public String roductDetail(HttpServletRequest request, HttpServletResponse response) throws IOException {
+//		try {
+//			String productIdParam = request.getParameter("productId");
+//			Long Id = Long.getLong(productIdParam);
+//			request.setAttribute("product", productDAO.getProductById(Id));
+//			return "productDetail";
+//		} catch (NumberFormatException | IndexOutOfBoundsException e) {
+//			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+//			return null;
+//		}
+//	}
+
 }
