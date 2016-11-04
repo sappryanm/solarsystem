@@ -1,5 +1,4 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-
 <c:import url="/WEB-INF/jsp/common/header.jsp" />
 <div style="background-color:white">
 
@@ -12,7 +11,7 @@
 			<img src="img/${product.imageName}" style="height: 200px"/> 
 			</td>
 			<td>
-				<b>${product.name}</b>
+				<p style=color:black><b>${product.name}</b></p>
 				<br>
 				<a href="productDetail?productId=${product.id}">${product.price} price</a>
 			</td>

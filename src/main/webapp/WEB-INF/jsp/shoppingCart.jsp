@@ -1,11 +1,14 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ page import="com.techelevator.ssg.model.store.DollarAmount"%>
 
 <c:import url="/WEB-INF/jsp/common/header.jsp" />
 
 <div style="background-color: white">
 
 <table>
-<c:forEach items="${ cart}" var="item">
+<c:set var="grandTotal" value="${DollarAmount(0) }"/>
+
+<c:forEach items="${ cart}" var="item" >
 	
 		<tr>
 			<td>
@@ -22,12 +25,16 @@
 			</td>
 			<td>
 				<p style="color:black">${item.total} </p>
+				 <c:set var="grandTotal" value="${grandTotal.plus(item.total)}" />
 			</td>
 		</tr>
 
 </c:forEach>
+		  <tr><td></td><td></td><td></td><td></td><td style=color:black>Grand Total: ${grandTotal}</td></tr>
+		  <tr><td></td><td></td><td></td><td></td><td><a href="endsession"> Checkout</a></td></tr>
+		
 </table>	
-
+	
 
 
 

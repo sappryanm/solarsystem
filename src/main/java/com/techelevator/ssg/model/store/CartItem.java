@@ -21,13 +21,14 @@ public class CartItem {
 		this.product = product;
 	}
 	public DollarAmount getTotal(){
-		
 		DollarAmount total = new DollarAmount(0);
-		for(int i=0; i<quantity-1; i++){
+		DollarAmount temp =new DollarAmount(0);
+		for(int i=0; i<quantity; i++){
 			
-			total = product.getPrice().plus(product.getPrice());
+			
+			total = total.plus(product.getPrice());
 		}
-		
+		//System.out.println(total);
 		return total;
 		
 	}
